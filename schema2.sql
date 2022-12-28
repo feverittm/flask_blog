@@ -1,0 +1,13 @@
+DROP TABLE IF EXISTS members;
+
+CREATE TABLE members (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    idnum TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    first_name TEXT NOT NULL,
+    email TEXT,
+    cell TEXT,
+    status INTEGER NOT NULL,
+    utype INTEGER NOT NULL
+);

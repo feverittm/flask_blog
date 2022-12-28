@@ -7,7 +7,7 @@ try:
 	# Import csv and extract data
 	with open('team_checkin.csv', 'r') as fin:
 		dr = csv.DictReader(fin)
-		student_info = [(i['LAST NAME'], i['FIRST NAME']) for i in dr]
+		student_info = [(i['idnum'], i['last_name'], i['first_name'], i['email'], i['cell'], i['status'], i['utype']) for i in dr]
 		print(student_info)
 
 	# Connect to SQLite
@@ -15,16 +15,11 @@ try:
 	cursor = sqliteConnection.cursor()
 
 	# Create student table
-	cursor.execute('drop table if exists team;')
-
-	cursor.execute('create table team(lastname varchar2(10), firstname varchar2(10));')
-
-	# Insert data into table
 	cursor.executemany(
-		"insert into team (lastname, firstname) VALUES (?, ?);", student_info)
+		"insert into members (idnum, last_name, first_name, email, cell, status, utype) VALUES (?, ?, ?, ?, ?, ?, ?);", student_info)
 
 	# Show student table
-	cursor.execute('select * from student;')
+	cursor.execute('select * from members;')
 
 	# View result
 	result = cursor.fetchall()
