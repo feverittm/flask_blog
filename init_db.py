@@ -8,12 +8,12 @@ with open('schema2.sql') as f:
 
 cur = connection.cursor()
 
-#cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
-#            ('First Post', 'Content for the first post')
+#cur.execute("INSERT INTO s (title, content) VALUES (?, ?)",
+#            ('First ', 'Content for the first ')
 #            )
 
-#cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
-#            ('Second Post', 'Content for the second post')
+#cur.execute("INSERT INTO s (title, content) VALUES (?, ?)",
+#            ('Second ', 'Content for the second ')
 #            )
 
 connection.commit()

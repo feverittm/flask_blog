@@ -9,14 +9,14 @@ def get_db_connection():
     return conn
 
 
-def get_post(post_id):
+def get_member(member_id):
     conn = get_db_connection()
-    post = conn.execute('SELECT * FROM posts WHERE id = ?',
-                        (post_id,)).fetchone()
+    member = conn.execute('SELECT * FROM members WHERE idnom = ?',
+                        (member_id,)).fetchone()
     conn.close()
-    if post is None:
+    if member is None:
         abort(404)
-    return post
+    return member
 
 
 app = Flask(__name__)
@@ -26,15 +26,15 @@ app.config['SECRET_KEY'] = 'your secret key'
 @app.route('/')
 def index():
     conn = get_db_connection()
-    posts = conn.execute('SELECT * FROM posts').fetchall()
+    members = conn.execute('SELECT * FROM members').fetchall()
     conn.close()
-    return render_template('index.html', posts=posts)
+    return render_template('index.html', members=members)
 
 
-@app.route('/<int:post_id>')
-def post(post_id):
-    post = get_post(post_id)
-    return render_template('post.html', post=post)
+@app.route('/<int:member_id>')
+def member(member_id):
+    member = get_member(member_id)
+    return render_template('member.html', member=member)
 
 
 @app.route('/create', methods=('GET', 'POST'))
@@ -47,7 +47,7 @@ def create():
             flash('Title is required!')
         else:
             conn = get_db_connection()
-            conn.execute('INSERT INTO posts (title, content) VALUES (?, ?)',
+            conn.execute('INSERT INTO members (title, content) VALUES (?, ?)',
                          (title, content))
             conn.commit()
             conn.close()
@@ -58,7 +58,7 @@ def create():
 
 @app.route('/<int:id>/edit', methods=('GET', 'POST'))
 def edit(id):
-    post = get_post(id)
+    member = get_member(id)
 
     if request.method == 'POST':
         title = request.form['title']
@@ -68,24 +68,24 @@ def edit(id):
             flash('Title is required!')
         else:
             conn = get_db_connection()
-            conn.execute('UPDATE posts SET title = ?, content = ?'
+            conn.execute('UPDATE members SET title = ?, content = ?'
                          ' WHERE id = ?',
                          (title, content, id))
             conn.commit()
             conn.close()
             return redirect(url_for('index'))
 
-    return render_template('edit.html', post=post)
+    return render_template('edit.html', member=member)
 
 
 @app.route('/<int:id>/delete', methods=('POST',))
 def delete(id):
-    post = get_post(id)
+    member = get_member(id)
     conn = get_db_connection()
-    conn.execute('DELETE FROM posts WHERE id = ?', (id,))
+    conn.execute('DELETE FROM members WHERE id = ?', (id,))
     conn.commit()
     conn.close()
-    flash('"{}" was successfully deleted!'.format(post['title']))
+    flash('"{}" was successfully deleted!'.format(member['title']))
     return redirect(url_for('index'))
 
 if __name__ == "__main__":
