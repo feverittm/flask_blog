@@ -1,15 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %} Welcome to FlaskBlog {% endblock %}</h1>
-    {% for member in members %}
-        <a href="{{ url_for('member', member_id=member['id']) }}">
-            <h2>{{ member['title'] }}</h2>
-        </a>
-        <span class="badge badge-primary">{{ member['created'] }}</span>
-        <a href="{{ url_for('edit', id=member['id']) }}">
-            <span class="badge badge-warning">Edit</span>
-        </a>
-        <hr>
-    {% endfor %}
+    <h1>{% block title %}Spartan Robotics Check-In{% endblock %}</h1>
+    <p></p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>  
+        {% for member in members %}
+            <tr>
+                <td>
+                    {% if member['status'] == 1 %}
+                        <button type="button" class="btn btn-success">In</button>
+                    {% else %}
+                        <button type="button" class="btn btn-danger">Out</button>
+                    {% endif %}
+                </td>
+                <td>{{ member['last_name'] }}</td>
+                <td>{{ member['first_name'] }}</td>
+                <td>{{ member['email'] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
