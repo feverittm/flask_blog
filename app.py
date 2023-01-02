@@ -1,6 +1,7 @@
 import sqlite3
 from flask import Flask, render_template, request, url_for, flash, redirect
 from werkzeug.exceptions import abort
+import sys
 
 
 def get_db_connection():
@@ -23,10 +24,15 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your secret key'
 
 
-@app.route('/')
+@app.route('/', methods=["GET", "POST"])
 def index():
+    if request.method == "POST":
+        data = dict(request.form)
+        app.logger.info("Data values: %s", data)
+        #users = getusers(data["search"])
+    users = []
     conn = get_db_connection()
-    members = conn.execute('SELECT * FROM members').fetchall()
+    members = conn.execute("SELECT * FROM members WHERE status = 'IN' ").fetchall()
     conn.close()
     return render_template('index.html', members=members)
 
@@ -35,6 +41,8 @@ def index():
 def member(member_id):
     member = get_member(member_id)
     return render_template('member.html', member=member)
+
+
 
 
 @app.route('/create', methods=('GET', 'POST'))
