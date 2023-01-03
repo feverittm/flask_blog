@@ -28,73 +28,13 @@ app.config['SECRET_KEY'] = 'your secret key'
 def index():
     if request.method == "POST":
         data = dict(request.form)
-        app.logger.info("Data values: %s", data)
-        #users = getusers(data["search"])
-    users = []
+        svalues = data.values()
+        app.logger.warning("Posting to index method, Id number input is %s", data['idnum'])
+        user = get_member(data['idnum'])
     conn = get_db_connection()
     members = conn.execute("SELECT * FROM members WHERE status = 'IN' ").fetchall()
     conn.close()
     return render_template('index.html', members=members)
-
-
-@app.route('/<int:member_id>')
-def member(member_id):
-    member = get_member(member_id)
-    return render_template('member.html', member=member)
-
-
-
-
-@app.route('/create', methods=('GET', 'POST'))
-def create():
-    if request.method == 'POST':
-        title = request.form['title']
-        content = request.form['content']
-
-        if not title:
-            flash('Title is required!')
-        else:
-            conn = get_db_connection()
-            conn.execute('INSERT INTO members (title, content) VALUES (?, ?)',
-                         (title, content))
-            conn.commit()
-            conn.close()
-            return redirect(url_for('index'))
-
-    return render_template('create.html')
-
-
-@app.route('/<int:id>/edit', methods=('GET', 'POST'))
-def edit(id):
-    member = get_member(id)
-
-    if request.method == 'POST':
-        title = request.form['title']
-        content = request.form['content']
-
-        if not title:
-            flash('Title is required!')
-        else:
-            conn = get_db_connection()
-            conn.execute('UPDATE members SET title = ?, content = ?'
-                         ' WHERE id = ?',
-                         (title, content, id))
-            conn.commit()
-            conn.close()
-            return redirect(url_for('index'))
-
-    return render_template('edit.html', member=member)
-
-
-@app.route('/<int:id>/delete', methods=('POST',))
-def delete(id):
-    member = get_member(id)
-    conn = get_db_connection()
-    conn.execute('DELETE FROM members WHERE id = ?', (id,))
-    conn.commit()
-    conn.close()
-    flash('"{}" was successfully deleted!'.format(member['title']))
-    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run()
