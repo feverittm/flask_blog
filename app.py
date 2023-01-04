@@ -10,15 +10,26 @@ def get_db_connection():
     return conn
 
 
-def get_member(member_id):
+def get_member_byid(member_id):
     conn = get_db_connection()
-    member = conn.execute('SELECT * FROM members WHERE idnom = ?',
+    member = conn.execute('SELECT * FROM members WHERE idnum = ?',
                         (member_id,)).fetchone()
     conn.close()
     if member is None:
         abort(404)
+    for i in member:
+        app.logger.warning("   member information: %s", i)
+
     return member
 
+def get_member_byname(name):
+    conn = get_db_connection()
+    member = conn.execute("SELECT * FROM members WHERE last_name like '%?%'",
+                     (last_name,)).fetchone()
+    conn.close()
+    if member is None:
+        abort(404)
+    return member
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your secret key'
@@ -30,7 +41,8 @@ def index():
         data = dict(request.form)
         svalues = data.values()
         app.logger.warning("Posting to index method, Id number input is %s", data['idnum'])
-        user = get_member(data['idnum'])
+        user = get_member_byid(data['idnum'])
+        app.logger.warning("return from memberid %s", user[3])
     conn = get_db_connection()
     members = conn.execute("SELECT * FROM members WHERE status = 'IN' ").fetchall()
     conn.close()
