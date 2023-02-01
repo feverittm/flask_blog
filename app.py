@@ -15,10 +15,14 @@ def get_member_byid(member_id):
     member = conn.execute('SELECT * FROM members WHERE idnum = ?',
                         (member_id,)).fetchone()
     conn.close()
-    if member is None:
+    if type(member) == 'NoneType':
+        print("No data found")
         abort(404)
-    for i in member:
-        app.logger.warning("   member information: %s", i)
+    if member is None:
+        flash('No team member with that ID exists')
+    else:
+        for i in member:
+            app.logger.warning("   member information: %s", i)
 
     return member
 
